@@ -37,6 +37,6 @@ private String descrizione;
 
     @ManyToOne
     @JoinColumn(name= "creatore_id", nullable = false)
-    private Utente cratore;
+    private Utente creatore;
 
 }

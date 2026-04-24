@@ -30,4 +30,9 @@ public class ErrorsHandler {
         ex.printStackTrace();
         return new ErrorsDTO("Il problema riguarda il server, risolveremo presto.", LocalDateTime.now());
     }
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorsDTO handleUnauthorized(UnauthorizedException ex) {
+        return new ErrorsDTO(ex.getMessage(), LocalDateTime.now());
+    }
 }
