@@ -35,4 +35,9 @@ public class ErrorsHandler {
     public ErrorsDTO handleUnauthorized(UnauthorizedException ex) {
         return new ErrorsDTO(ex.getMessage(), LocalDateTime.now());
     }
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorsDTO handleNoResourceFound(org.springframework.web.servlet.resource.NoResourceFoundException ex) {
+        return new ErrorsDTO("L'endpoint richiesto non esiste. Controlla l'URL.", LocalDateTime.now());
+    }
 }
