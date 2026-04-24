@@ -24,11 +24,14 @@ public class PrenotazioneService {
     @Autowired
     private EventoRepository eventoRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     public Prenotazione save(PrenotazioneDTO dto, Utente currentUser) {
-        // 1. Cerchiamo l'evento
+
         Evento evento = eventoService.findById(dto.eventoId());
 
-        // 2. Controlli di sicurezza aziendali
+
         if (evento.getPostiDisponibili() <= 0) {
             throw new BadRequestException("Spiacenti, l'evento è sold out.");
         }
@@ -36,18 +39,22 @@ public class PrenotazioneService {
             throw new BadRequestException("Hai già prenotato un posto per questo evento.");
         }
 
-        // 3. Riduciamo i posti disponibili e salviamo l'evento aggiornato
+
         evento.setPostiDisponibili(evento.getPostiDisponibili() - 1);
         eventoRepository.save(evento);
 
-        // 4. Creiamo e salviamo la prenotazione
+
         Prenotazione p = new Prenotazione();
         p.setUtente(currentUser);
         p.setEvento(evento);
 
-        // TODO: Qui nel prossimo step agganceremo Mailgun per mandare l'email
+        Prenotazione salvata = prenotazioneRepository.save(p);
 
-        return prenotazioneRepository.save(p);
+
+        emailService.sendConfermaPrenotazione(currentUser, salvata);
+
+
+        return salvata;
     }
 
     public List<Prenotazione> getPrenotazioniUtente(Utente currentUser) {
